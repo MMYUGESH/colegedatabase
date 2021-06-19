@@ -37,6 +37,30 @@ app.get("/", async (req, res) => {
         console.log(error);
     }
 })
+app.post('/apply', async (req, res) => {
+    try {
+        let clientInfo = await mongoClient.connect(dbUrl);
+        let db = clientInfo.db("form");
+        await db.collection("details").insertOne(req.body);
+        res.status(200).json({ message: "applied for the job" });
+        clientInfo.close();
+    }
+    catch (error) {
+        console.log(error);
+    }
+})
+app.get("/details", async (req, res) => {
+    try {
+        let clientInfo = await mongoClient.connect(dbUrl);
+        let db = clientInfo.db("form");
+        let data = await db.collection("details").find().toArray();
+        res.status(200).json(data);
+        clientInfo.close();
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 
 
 app.listen(port, () => console.log("Apps runs with", port));
